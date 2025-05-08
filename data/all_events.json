@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "title": "Tech Conference 2025",
+    "date": "2025-06-15",
+    "location": "New York",
+    "description": "A conference for tech enthusiasts and professionals.",
+    "image": "/uploads/default_event1.webp"
+  },
+  {
+    "id": "2",
+    "title": "Startup Pitch Night",
+    "date": "2025-07-10",
+    "location": "San Francisco",
+    "description": "An event for early-stage startups to pitch investors.",
+    "image": "/uploads/default_event2.webp"
+  },
+  {
+    "id": "4e1c4787-99ea-4989-960d-a129dcb81c2c",
+    "title": "Next.js Conference",
+    "date": "2025-05-21",
+    "location": "Nigeria, Lagos",
+    "description": "Next.js new feature talks",
+    "image": "/uploads/1a459220-e467-43fc-8344-2664c2b71cb8_CJcxUMRp.jpg"
+  },
+  {
+    "id": "6c4b9c68-7b87-4d26-b937-6cd734cd4d65",
+    "title": "React v19",
+    "date": "2025-05-23",
+    "location": "New York",
+    "description": "React new version releases",
+    "image": "/uploads/d87b05b2-9ffe-450a-867a-e5ec723600c5_Happy Tuesday😊.jpg"
+  },
+  {
+    "id": "22ea970d-575b-4a64-ad07-dd1ee26bce48",
+    "title": "Interview Next Step",
+    "date": "2025-05-14",
+    "location": "New York",
+    "description": "Next step for interview success",
+    "image": "/uploads/8f445363-8db8-4b4d-b017-cf389c11ba71_Rise Up T-Shirt - District Unisex Shirt _ Royal Blue _ S.jpg"
+  }
+]
