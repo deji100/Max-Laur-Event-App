@@ -1,120 +1,134 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
+
+type FormValues = {
+  title: string;
+  date: string;
+  location: string;
+  description: string;
+  image: FileList | null;
+};
 
 export default function CreateEventPage() {
-  const router = useRouter(); // Hook to navigate programmatically
-  const [form, setForm] = useState({
-    title: "", // Event title
-    date: "", // Event date
-    location: "", // Event location
-    description: "", // Event description
-    image: null as File | null, // Event image file
-  });
-  const [preview, setPreview] = useState<string | null>(null); // Image preview URL
-  const [loading, setLoading] = useState(false); // Loading state for the submit button
-  const [error, setError] = useState<string | null>(null); // Error message state
+  const router = useRouter();
+  const [preview, setPreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  // Handle change for text input and textarea fields
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<FormValues>();
 
-  // Handle image file change and generate preview
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] ?? null;
-    if (file) {
-      setForm((prev) => ({ ...prev, image: file }));
-      setPreview(URL.createObjectURL(file)); // Set preview for the selected image
+  const watchImage = watch("image");
+
+  // Update image preview
+  useEffect(() => {
+    if (watchImage && watchImage.length > 0) {
+      const objectUrl = URL.createObjectURL(watchImage[0]);
+      setPreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
     }
-  };
+    setPreview(null);
+  }, [watchImage]);
 
-  // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true); // Set loading state to true when the form is submitted
-    setError(null); // Reset error message
-
-    const formData = new FormData();
-    // Append form values to FormData object
-    Object.entries(form).forEach(([key, val]) => {
-      if (val) formData.append(key, val as any);
-    });
+  const onSubmit = async (data: FormValues) => {
+    setLoading(true);
 
     try {
-      const res = await fetch("/api/events/create", {
-        // API call to create an event
-        method: "POST",
-        body: formData, // Sending form data including image
-      });
-
-      if (!res.ok) {
-        // If the request is not successful
-        const err = await res.text();
-        throw new Error(err);
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("date", data.date);
+      formData.append("location", data.location);
+      formData.append("description", data.description);
+      if (data.image && data.image.length > 0) {
+        formData.append("image", data.image[0]);
       }
 
-      router.push("/"); // Redirect to the homepage after successful creation
+      const res = await fetch("/api/events/create", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await res.json();
+
+      if (!res.ok || !result.success) {
+        throw new Error(result.message || "Failed to create event");
+      }
+
+      toast.success("Event created successfully!");
+
+      setTimeout(() => {
+        router.push("/");
+      }, 1000); // Wait 2s before redirect
     } catch (err: any) {
-      setError(err.message || "Something went wrong"); // Handle error
+      toast.error(err.message || "Something went wrong");
     } finally {
-      setLoading(false); // Set loading state to false after the request is completed
+      setLoading(false);
     }
   };
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
+      <Toaster />
       <h1 className="text-xl font-bold mb-4">Create New Event</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <input
-          name="title"
+          {...register("title", { required: "Title is required" })}
           placeholder="Title"
-          required
-          className="w-full border p-2"
-          onChange={handleChange} // Handle title change
+          className={`w-full border p-2 ${errors.title ? "border-red-500" : ""}`}
         />
+        {errors.title && <p className="text-red-500">{errors.title.message}</p>}
+
         <input
-          name="date"
+          {...register("date", { required: "Date is required" })}
           type="date"
-          required
-          className="w-full border p-2"
-          onChange={handleChange} // Handle date change
+          className={`w-full border p-2 ${errors.date ? "border-red-500" : ""}`}
         />
+        {errors.date && <p className="text-red-500">{errors.date.message}</p>}
+
         <input
-          name="location"
+          {...register("location", { required: "Location is required" })}
           placeholder="Location"
-          required
-          className="w-full border p-2"
-          onChange={handleChange} // Handle location change
+          className={`w-full border p-2 ${errors.location ? "border-red-500" : ""}`}
         />
+        {errors.location && <p className="text-red-500">{errors.location.message}</p>}
+
         <textarea
-          name="description"
+          {...register("description", { required: "Description is required" })}
           placeholder="Description"
-          required
-          className="w-full border p-2"
           rows={4}
-          onChange={handleChange} // Handle description change
+          className={`w-full border p-2 ${errors.description ? "border-red-500" : ""}`}
         />
-        <input type="file" accept="image/*" onChange={handleImageChange} /> 
+        {errors.description && <p className="text-red-500">{errors.description.message}</p>}
+
+        <input
+          {...register("image", { required: "Image is required" })}
+          type="file"
+          accept="image/*"
+        />
+        {errors.image && <p className="text-red-500">{errors.image.message}</p>}
+
         {preview && (
           <img
             src={preview}
             alt="Preview"
-            className="w-full h-48 object-cover mt-2"
+            className="w-full h-48 object-cover mt-2 rounded"
           />
-        )}{" "}
+        )}
+
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
         >
           {loading ? "Submitting..." : "Create Event"}
         </button>
-        {error && <p className="text-red-500">{error}</p>}
       </form>
     </div>
   );

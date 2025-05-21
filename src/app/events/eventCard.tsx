@@ -1,8 +1,11 @@
+"use client";
+
 import { useFavorites } from '../context/FavoritesContext';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Event } from '../types';
 
-export default function EventCard({ event }: { event: any }) {
+export default function EventCard({ event }: { event: Event }) {
   const { toggleFavorite, isFavorite } = useFavorites();
 
   return (

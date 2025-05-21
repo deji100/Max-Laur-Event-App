@@ -1,11 +1,18 @@
-'use client'; // Ensures this component is only rendered on the client side
+'use client'; // Enables client-side rendering in Next.js App Router
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation'; // For accessing route parameters
-import { locationCoords } from '@/app/locationCoords'; // Predefined map of location names to coordinates
-import { useFavorites } from '../../context/FavoritesContext'; // Custom hook for managing favorite events
+import { useParams } from 'next/navigation'; // Hook to extract route parameters
+import { useFavorites } from '../../context/FavoritesContext'; // Custom hook to manage favorite events
 
-// Define the expected shape of an event
+// Type definition for weather information
+type Weather = {
+  temperature: string;
+  wind: string;
+  description: string;
+  icon: string;
+};
+
+// Type definition for event object
 type Event = {
   id: string;
   title: string;
@@ -13,94 +20,53 @@ type Event = {
   location: string;
   description: string;
   image: string;
-};
-
-// Mapping of weather codes to human-readable descriptions and emojis/icons
-const weatherDescriptions: Record<number, { label: string; icon: string }> = {
-  0: { label: 'Clear sky', icon: '☀️' },
-  1: { label: 'Mainly clear', icon: '🌤️' },
-  2: { label: 'Partly cloudy', icon: '⛅' },
-  3: { label: 'Overcast', icon: '☁️' },
-  45: { label: 'Fog', icon: '🌫️' },
-  48: { label: 'Depositing rime fog', icon: '🌫️' },
-  51: { label: 'Light drizzle', icon: '🌦️' },
-  61: { label: 'Light rain', icon: '🌧️' },
-  71: { label: 'Light snow', icon: '🌨️' },
-  80: { label: 'Rain showers', icon: '🌦️' },
-  95: { label: 'Thunderstorm', icon: '⛈️' },
+  weather?: Weather; // Weather info is optional
 };
 
 export default function EventDetailPage() {
-  const { id } = useParams(); // Get event ID from the route
-  const [event, setEvent] = useState<Event | null>(null); // Stores the loaded event
-  const [weather, setWeather] = useState<{
-    temperature: string;
-    wind: string;
-    description: string;
-    icon: string;
-  } | null>(null); // Stores the weather details for the event's location
-  const [loading, setLoading] = useState(true); // Tracks loading state
-  const [error, setError] = useState(false); // Tracks error state
-  const { toggleFavorite, isFavorite } = useFavorites(); // Get favorite handlers from context
+  const { id } = useParams(); // Get event ID from route parameters
+  const [event, setEvent] = useState<Event | null>(null); // Holds the fetched event
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(false); // Error state
+  const { toggleFavorite, isFavorite } = useFavorites(); // Favorite logic from context
 
-  // Fetch the event data and corresponding weather info when the component loads
+  // Fetch event details on component mount or when the ID changes
   useEffect(() => {
-    async function fetchEventAndWeather() {
+    async function fetchEvent() {
       try {
-        // Fetch all events and find the one matching the route ID
-        const res = await fetch('/api/events');
-        const events: Event[] = await res.json();
-        const found = events.find(e => e.id === id);
-        if (!found) {
-          setError(true);
-          return;
-        }
-        setEvent(found);
-
-        // Get coordinates for the event's location and fetch current weather
-        const coords = locationCoords[found.location];
-        if (coords) {
-          const weatherRes = await fetch(
-            `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current=temperature_2m,weathercode,windspeed_10m`
-          );
-          const weatherData = await weatherRes.json();
-          const code = weatherData.current.weathercode;
-          const descObj = weatherDescriptions[code] || { label: 'Unknown', icon: '❓' };
-
-          setWeather({
-            temperature: `${weatherData.current.temperature_2m}°C`,
-            wind: `${weatherData.current.windspeed_10m} km/h`,
-            description: descObj.label,
-            icon: descObj.icon,
-          });
-        } else {
-          setWeather(null); // No weather info available for location
-        }
+        const res = await fetch(`/api/events/event-with-weather/${id}`); // Fetch event with weather data
+        if (!res.ok) throw new Error('Failed to fetch'); // Handle bad responses
+        const data = await res.json(); // Parse response
+        setEvent(data); // Store event in state
       } catch (err) {
-        console.error('Error fetching event or weather:', err);
-        setError(true);
+        console.error('Error fetching event:', err); // Log error for debugging
+        setError(true); // Trigger error UI
       } finally {
-        setLoading(false); // Stop loading in either case
+        setLoading(false); // Disable loading spinner
       }
     }
 
-    fetchEventAndWeather();
+    fetchEvent(); // Call the fetch function
   }, [id]);
 
-  // Render loading, error, or the detailed event page
+  // Show loading UI
   if (loading) return <p className="p-6">Loading...</p>;
+
+  // Show error message if event fails to load or doesn't exist
   if (error || !event) return <p className="p-6 text-red-500">Event not found or failed to load.</p>;
 
+  // Render the event detail UI
   return (
     <div className="p-6 flex justify-center">
       <div className="w-full max-w-2xl bg-white shadow-lg rounded-2xl overflow-hidden">
+        {/* Event Image and Favorite Button */}
         <div className="relative">
           <img
             src={event.image}
             alt={event.title}
             className="w-full h-72 object-cover"
           />
-          {/* Button to toggle favorite state */}
+          {/* Toggle favorite icon */}
           <button
             onClick={() => toggleFavorite(event.id)}
             className="absolute top-4 right-4 text-3xl transition hover:scale-110"
@@ -109,6 +75,8 @@ export default function EventDetailPage() {
             {isFavorite(event.id) ? '❤️' : '🤍'}
           </button>
         </div>
+
+        {/* Event Info Section */}
         <div className="p-6">
           <h1 className="text-3xl font-semibold mb-2 text-gray-800">{event.title}</h1>
           <div className="text-gray-600 mb-3 space-y-1">
@@ -116,20 +84,21 @@ export default function EventDetailPage() {
             <p>📍 <span className="font-medium">{event.location}</span></p>
           </div>
 
-          {/* Display weather info if available */}
-          {weather ? (
+          {/* Weather Info Block */}
+          {event.weather ? (
             <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
               <p className="text-xl mb-1">
-                {weather.icon} <span className="font-semibold">{weather.description}</span>
+                {event.weather.icon} <span className="font-semibold">{event.weather.description}</span>
               </p>
-              <p>🌡️ Temperature: <span className="font-medium">{weather.temperature}</span></p>
-              <p>💨 Wind Speed: <span className="font-medium">{weather.wind}</span></p>
+              <p>🌡️ Temperature: <span className="font-medium">{event.weather.temperature}</span></p>
+              <p>💨 Wind Speed: <span className="font-medium">{event.weather.wind}</span></p>
             </div>
           ) : (
+            // Show fallback message if weather data is not available
             <p className="text-gray-500 mb-4">🌤️ Weather info unavailable for this location.</p>
           )}
 
-          {/* Display event description */}
+          {/* Event Description */}
           <p className="text-gray-700 leading-relaxed">{event.description}</p>
         </div>
       </div>

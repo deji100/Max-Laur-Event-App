@@ -50,7 +50,7 @@ export default function FavoritesPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {/* Map over favorite events and display them using EventCard component */}
-          {favoriteEvents.map(event => (
+          {favoriteEvents.slice().reverse().map(event => (
             <EventCard key={event.id} event={event} />
           ))}
         </div>

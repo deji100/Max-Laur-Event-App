@@ -38,5 +38,77 @@
     "location": "New York",
     "description": "Next step for interview success",
     "image": "/uploads/8f445363-8db8-4b4d-b017-cf389c11ba71_Rise Up T-Shirt - District Unisex Shirt _ Royal Blue _ S.jpg"
+  },
+  {
+    "id": "2d4eac58-452d-4759-a3e3-21eb2ddf180b",
+    "title": "Max Birthday",
+    "date": "2025-07-22",
+    "location": "Bangkok",
+    "description": "Max's Birthday Party",
+    "image": "/uploads/2cc6e86d-ddf3-49fe-92c5-3d9e2a674141_Mentis Abstractae 04_24.jpg"
+  },
+  {
+    "id": "0bcd3d68-0603-44c9-b4bf-2860d9bf3254",
+    "title": "Benedicta's Birthday",
+    "date": "2025-11-30",
+    "location": "Lagos",
+    "description": "My World",
+    "image": "/uploads/46ffb467-2cae-4c59-8bf6-955e7ed90ead_5xggdoQW.jpeg"
+  },
+  {
+    "id": "dbbef865-5b25-4db9-b910-b8f05a310672",
+    "title": "Demi",
+    "date": "2025-05-22",
+    "location": "Lagos",
+    "description": "Hi demi",
+    "image": "/uploads/f98aa0db-e536-4244-a3ba-93c192c417f7_LS472MbX.jpg"
+  },
+  {
+    "id": "dce410b7-0159-4621-8b75-9e2619c3bc8d",
+    "title": "Teminikan",
+    "date": "2025-11-30",
+    "location": "Lagos",
+    "description": "Love of my life",
+    "image": "/uploads/5c6ab2ad-0998-4ab5-915a-cfe5cf8270eb_Jesus Pillow - Gift For Christian - Trust God + Chill pillow - 16 x 16.jpg"
+  },
+  {
+    "id": "e44f0780-7a26-47c6-a2d6-b9cc235779d8",
+    "title": "Mum's Birthday Party",
+    "date": "2025-05-26",
+    "location": "New York",
+    "description": "My mum's birthday party",
+    "image": "/uploads/d0f2bb3c-5224-473a-8754-01e1327028c3_Garden inspo.jpg"
+  },
+  {
+    "id": "3d058952-2b2f-4471-90a0-1eae5d53b3ff",
+    "title": "max celebration",
+    "date": "2025-05-22",
+    "location": "Bangkok",
+    "description": "Celebrating Love",
+    "image": "/uploads/a020b793-63ab-41c6-9ba9-15cf18f306eb_KD702Vpq.jpeg"
+  },
+  {
+    "id": "1549c2e9-be07-427d-bac2-000d259ac353",
+    "title": "Jide Birthday party",
+    "date": "2025-05-15",
+    "location": "Lagos",
+    "description": "My brother's party",
+    "image": "/uploads/4ff83a52-400c-4370-8162-ec60e9821197_Eat Sleep Code Repeat Sticker by misdememeor.jpg"
+  },
+  {
+    "id": "4dede399-530c-4406-a60b-4d475806aeaa",
+    "title": "Creating an Event",
+    "date": "2025-05-21",
+    "location": "Lagos",
+    "description": "New Event Creation",
+    "image": "/uploads/9303c541-453d-45fa-9f84-b7139b366c78_Capturing the moments that steal the spotlight.jpg"
+  },
+  {
+    "id": "030eddb8-05c3-4f28-b1d2-ccfa7c558972",
+    "title": "Men's Day",
+    "date": "2025-05-23",
+    "location": "Bangkok",
+    "description": "Lagos Men Day",
+    "image": "/uploads/29106552-8a93-45ef-ac16-def83f427a36_50QNQiZg.jpeg"
   }
 ]
