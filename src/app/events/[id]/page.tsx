@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import EventDetailClient from "./eventDetailClient";
 
-export const runtime = "nodejs";
 
 type Weather = {
   temperature: string;
