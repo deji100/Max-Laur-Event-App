@@ -8,6 +8,8 @@ import fs from "fs/promises";
 // Import hardcoded location coordinates
 import { locationCoords } from "@/app/locationCoords";
 
+export const runtime = 'nodejs'
+
 // Define paths for the data directory and files
 const dataDir = path.join(process.cwd(), "data");
 const seedFile = path.join(dataDir, "events.json");      // seed file with initial events data
