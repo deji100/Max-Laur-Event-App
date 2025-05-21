@@ -42,13 +42,13 @@ const weatherDescriptions: Record<number, { label: string; icon: string }> = {
 // Define the GET request handler
 export async function GET(
   req: NextRequest,
-  // { params }: { params: { id: string } }
-    context: { params: { id: string } }
+  { params }: { params: { id: string } }
+    // context: { params: { id: string } }
 ) {
   // Ensure the events data file exists
   await ensureDataFile();
 
-  const { id } = await context.params; // Extract event ID from route parameters
+  const { id } = await params; // Extract event ID from route parameters
 
   // Read all events data
   const json = await fs.readFile(dataFile, "utf-8");
